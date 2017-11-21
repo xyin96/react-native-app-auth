@@ -2,11 +2,11 @@
 Pod::Spec.new do |s|
   s.name         = "RNAppAuth"
   s.version      = "1.0.0"
-  s.summary      = "RNAppAuth"
+  s.summary      = "React Native App Auth"
   s.description  = <<-DESC
                   RNAppAuth
                    DESC
-  s.homepage     = ""
+  s.homepage     = "https://github.com/FormidableLabs/react-native-app-auth"
   s.license      = "MIT"
   s.license      = { :type => "MIT", :file => "../LICENSE" }
   s.author             = { "author" => "kadi.kraman@formidable.com" }
