@@ -46,6 +46,7 @@ public class RNAppAuthModule extends ReactContextBaseJavaModule implements Activ
     private Boolean dangerouslyAllowInsecureHttpRequests;
     private Map<String, String> additionalParametersMap;
     private String clientSecret;
+    private Boolean customTokenExchange;
 
     public RNAppAuthModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -212,6 +213,10 @@ public class RNAppAuthModule extends ReactContextBaseJavaModule implements Activ
             AuthorizationException exception = AuthorizationException.fromIntent(data);
             if (exception != null) {
                 promise.reject("RNAppAuth Error", "Failed to authenticate", exception);
+                return;
+            }
+            if (this.customTokenExchange) {
+                promise.resolve(response);
                 return;
             }
 
@@ -447,12 +452,11 @@ public class RNAppAuthModule extends ReactContextBaseJavaModule implements Activ
             throw new Exception("serviceConfiguration passed without an authorizationEndpoint");
         }
 
-        if (!serviceConfiguration.hasKey("tokenEndpoint")) {
-            throw new Exception("serviceConfiguration passed without a tokenEndpoint");
-        }
-
         Uri authorizationEndpoint = Uri.parse(serviceConfiguration.getString("authorizationEndpoint"));
-        Uri tokenEndpoint = Uri.parse(serviceConfiguration.getString("tokenEndpoint"));
+        Uri tokenEndpoint = serviceConfiguration.hasKey("tokenEndpoint")
+            ? Uri.parse(serviceConfiguration.getString("tokenEndpoint"))
+            : Uri.parse("http://google.com");
+        this.customTokenExchange = serviceConfiguration.hasKey("tokenEndpoint");
         Uri registrationEndpoint = null;
         if (serviceConfiguration.hasKey("registrationEndpoint")) {
             registrationEndpoint = Uri.parse(serviceConfiguration.getString("registrationEndPoint"));
