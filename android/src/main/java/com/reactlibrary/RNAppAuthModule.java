@@ -216,7 +216,8 @@ public class RNAppAuthModule extends ReactContextBaseJavaModule implements Activ
                 return;
             }
             if (this.customTokenExchange) {
-                promise.resolve(response);
+                WritableMap map = authenticateResponseToMap(response);
+                promise.resolve(map);
                 return;
             }
 
@@ -416,6 +417,14 @@ public class RNAppAuthModule extends ReactContextBaseJavaModule implements Activ
         return map;
     }
 
+    private WritableMap authenticateResponseToMap(AuthorizationResponse response) {
+        WritableMap map = Arguments.createMap();
+
+        map.putString("code", response.authorizationCode);
+        System.out.println(response);
+        return map;
+    }
+
     /*
      * Create an App Auth configuration using the provided connection builder
      */
@@ -455,8 +464,8 @@ public class RNAppAuthModule extends ReactContextBaseJavaModule implements Activ
         Uri authorizationEndpoint = Uri.parse(serviceConfiguration.getString("authorizationEndpoint"));
         Uri tokenEndpoint = serviceConfiguration.hasKey("tokenEndpoint")
             ? Uri.parse(serviceConfiguration.getString("tokenEndpoint"))
-            : Uri.parse("http://google.com");
-        this.customTokenExchange = serviceConfiguration.hasKey("tokenEndpoint");
+            : Uri.parse("https://google.com");
+        this.customTokenExchange = !serviceConfiguration.hasKey("tokenEndpoint");
         Uri registrationEndpoint = null;
         if (serviceConfiguration.hasKey("registrationEndpoint")) {
             registrationEndpoint = Uri.parse(serviceConfiguration.getString("registrationEndPoint"));
